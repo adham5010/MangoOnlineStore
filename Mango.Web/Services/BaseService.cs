@@ -14,34 +14,33 @@ namespace Mango.Web.Services
         }
         public async Task<ResponseDto<T>?> SendAsync<T>(RequestDto requestDto)
         {
-            HttpClient httpClient = this._httpClientFactory.CreateClient("MangoApi");
-            HttpRequestMessage message = new();
-            message.Headers.Add("Content-Type", "application/json");
-            message.RequestUri = new Uri(requestDto.URL);
-            if (requestDto.Data != null)
-            {
-                message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
-            }
-            switch (requestDto.ApiType)
-            {
-                case Utility.SD.ApiType.GET:
-                    message.Method = HttpMethod.Get;
-                    break;
-                case Utility.SD.ApiType.POST:
-                    message.Method = HttpMethod.Post;
-                    break;
-                case Utility.SD.ApiType.PUT:
-                    message.Method = HttpMethod.Put;
-                    break;
-                case Utility.SD.ApiType.DELETE:
-                    message.Method = HttpMethod.Delete;
-                    break;
-                default:
-                    break;
-            }
-
             try
             {
+                HttpClient httpClient = this._httpClientFactory.CreateClient("MangoApi");
+                HttpRequestMessage message = new HttpRequestMessage();
+                message.Headers.Add("Accept", "application/json");
+                message.RequestUri = new Uri(requestDto.URL);
+                if (requestDto.Data != null)
+                {
+                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                }
+                switch (requestDto.ApiType)
+                {
+                    case Utility.SD.ApiType.GET:
+                        message.Method = HttpMethod.Get;
+                        break;
+                    case Utility.SD.ApiType.POST:
+                        message.Method = HttpMethod.Post;
+                        break;
+                    case Utility.SD.ApiType.PUT:
+                        message.Method = HttpMethod.Put;
+                        break;
+                    case Utility.SD.ApiType.DELETE:
+                        message.Method = HttpMethod.Delete;
+                        break;
+                    default:
+                        break;
+                }
                 HttpResponseMessage response = null;
                 response = httpClient.SendAsync(message).Result;
                 switch (response.StatusCode)
